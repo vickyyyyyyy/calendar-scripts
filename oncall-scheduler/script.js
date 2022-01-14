@@ -2,6 +2,9 @@ function getWeeks(start = new Date(), end = new Date(2022, 11, 31)) {
     const weeks = []
     var week = []
 
+    // make this inclusive
+    end.setDate(end.getDate() + 1)
+
     // loop through days
     for (var d = start; d < end; d.setDate(d.getDate() + 1)) {
         // if the day is a week day
