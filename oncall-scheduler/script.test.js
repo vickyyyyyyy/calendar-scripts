@@ -1,7 +1,80 @@
-const { getWeeks } = require("./script")
+const { eventsToDays, getWeeks } = require("./script")
 const weekDates = require("./__fixtures__/weekDates")
+const events = require("./__fixtures__/events")
 
 describe("script", () => {
+    describe("eventsToDays", () => {
+        it("returns single day off for a Monday to Tuesday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent()
+            ])).toEqual([
+                new Date(2022, 0, 17)
+            ])
+        })
+
+        it("returns two days off for a Monday to Wednesday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-17T00:00:00-05:00", "2022-01-19T00:00:00-05:00"),
+            ])).toEqual([
+                new Date(2022, 0, 17),
+                new Date(2022, 0, 18)
+            ])
+        })
+
+        it("returns three days off for a Monday to Thursday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-17T00:00:00-05:00", "2022-01-20T00:00:00-05:00"),
+            ])).toEqual([
+                new Date(2022, 0, 17),
+                new Date(2022, 0, 18),
+                new Date(2022, 0, 19)
+            ])
+        })
+
+        it("returns five days off for a Monday to Saturday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-08T00:00:00-05:00"),
+            ])).toEqual(...weekDates.weekdaysForOneWeek)
+        })
+
+        it("returns five days off for a Monday to Sunday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-09T00:00:00-05:00"),
+            ])).toEqual(...weekDates.weekdaysForOneWeek)
+        })
+
+        it("returns five days off for a Monday to Monday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-10T00:00:00-05:00"),
+            ])).toEqual(...weekDates.weekdaysForOneWeek)
+        })
+
+        it("does not return days off for a Saturday to Sunday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-01T00:00:00-05:00", "2022-01-02T00:00:00-05:00"),
+            ])).toEqual([])
+        })
+
+        it("does not return days off for a Saturday to Monday OOO event", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-01T00:00:00-05:00", "2022-01-03T00:00:00-05:00"),
+            ])).toEqual([])
+        })
+
+        it("returns days off for two midweek OOO events", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-05T00:00:00-05:00"),
+                events.OOOEvent("2022-01-05T00:00:00-05:00", "2022-01-08T00:00:00-05:00"),
+            ])).toEqual(...weekDates.weekdaysForOneWeek)
+        })
+
+        it("returns days off for two week-long OOO events", () => {
+            expect(eventsToDays([
+                events.OOOEvent("2022-01-01T00:00:00-05:00", "2022-01-08T00:00:00-05:00"),
+                events.OOOEvent("2022-01-10T00:00:00-05:00", "2022-01-17T00:00:00-05:00"),
+            ])).toEqual(weekDates.weekdaysForTwoWeeks.flat())
+        })
+    })
     describe("getWeeks", () => {
 
         describe("no input", () => {
