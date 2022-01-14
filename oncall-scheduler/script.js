@@ -1,4 +1,4 @@
-function getWeeks(start = new Date(), end = new Date(2022, 11, 31)) { 
+function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 11, 31)) { 
     const weeks = []
     var week = []
 
