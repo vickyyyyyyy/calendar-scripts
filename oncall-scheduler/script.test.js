@@ -25,9 +25,9 @@ describe("script", () => {
             expect(eventsToDays([
                 events.OOOEvent("2022-01-17T00:00:00-05:00", "2022-01-20T00:00:00-05:00"),
             ])).toEqual([
-                new Date(2022, 0, 17),
-                new Date(2022, 0, 18),
-                new Date(2022, 0, 19)
+                new Date('2022-01-17'),
+                new Date('2022-01-18'),
+                new Date('2022-01-19')
             ])
         })
 
@@ -80,7 +80,7 @@ describe("script", () => {
         describe("no input", () => {
             beforeAll(() => {
                 jest.useFakeTimers('modern');
-                jest.setSystemTime(new Date(2022, 0, 1));
+                jest.setSystemTime(new Date('2022-01-01'));
             });
             
             afterAll(() => {
@@ -94,50 +94,50 @@ describe("script", () => {
 
         describe("one week", () => {
             it("returns correct dates given start day of Monday and end day of Friday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 7)
+                const startDate = new Date('2022-01-03')
+                const endDate = new Date('2022-01-07')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek)
             })
     
             it("returns correct dates given start day of Monday and end day of Saturday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 8)
+                const startDate = new Date('2022-01-01')
+                const endDate = new Date('2022-01-08')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek)
             })
         
             it("returns correct dates given start day of Monday and end day of Sunday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 9)
+                const startDate = new Date('2022-01-03')
+                const endDate = new Date('2022-01-09')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek)
             })
     
             it("returns correct dates given start day of Monday and end day of Wednesday", () => {
-                const startDate = new Date(2022, 0, 10)
-                const endDate = new Date(2022, 0, 12)
+                const startDate = new Date('2022-01-10')
+                const endDate = new Date('2022-01-12')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromStartToMidForOneWeek)
             })
 
             it("returns correct dates given start day of Wednesday and end day of Friday", () => {
-                const startDate = new Date(2022, 0, 12)
-                const endDate = new Date(2022, 0, 14)
+                const startDate = new Date('2022-01-12')
+                const endDate = new Date('2022-01-14')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToEndForOneWeek)
             })
 
             it("returns correct dates given start day of Wednesday and end day of Saturday", () => {
-                const startDate = new Date(2022, 0, 12)
-                const endDate = new Date(2022, 0, 15)
+                const startDate = new Date('2022-01-12')
+                const endDate = new Date('2022-01-15')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToEndForOneWeek)
             })
 
             it("returns correct dates given start day of Wednesday and end day of Sunday", () => {
-                const startDate = new Date(2022, 0, 12)
-                const endDate = new Date(2022, 0, 16)
+                const startDate = new Date('2022-01-12')
+                const endDate = new Date('2022-01-16')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToEndForOneWeek)
             })
@@ -145,57 +145,57 @@ describe("script", () => {
 
         describe("two weeks", () => {
             it("returns correct dates given start date of Monday and end date of Friday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 14)
+                const startDate = new Date('2022-01-03')
+                const endDate = new Date('2022-01-14')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks)
             })
         
             it("returns correct dates given start date of Monday and end date of Saturday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 15)
+                const startDate = new Date('2022-01-03')
+                const endDate = new Date('2022-01-15')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks)
             })
         
             it("returns correct dates given start date of Monday and end date of Sunday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 16)
+                const startDate = new Date('2022-01-03')
+                const endDate = new Date('2022-01-16')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks)
             })
 
             it("returns correct dates given start date of Monday and end date of Wednesday", () => {
-                const startDate = new Date(2022, 0, 3)
-                const endDate = new Date(2022, 0, 12)
+                const startDate = new Date('2022-01-03')
+                const endDate = new Date('2022-01-12')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromStartToMidForTwoWeeks)
             })
 
             it("returns correct dates given start date of Wednesday and end date of Friday", () => {
-                const startDate = new Date(2022, 0, 5)
-                const endDate = new Date(2022, 0, 14)
+                const startDate = new Date('2022-01-05')
+                const endDate = new Date('2022-01-14')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToEndForTwoWeeks)
             })
 
             it("returns correct dates given start date of Wednesday and end date of Saturday", () => {
-                const startDate = new Date(2022, 0, 5)
-                const endDate = new Date(2022, 0, 15)
+                const startDate = new Date('2022-01-05')
+                const endDate = new Date('2022-01-15')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToEndForTwoWeeks)
             })
 
             it("returns correct dates given start date of Wednesday and end date of Sunday", () => {
-                const startDate = new Date(2022, 0, 5)
-                const endDate = new Date(2022, 0, 16)
+                const startDate = new Date('2022-01-05')
+                const endDate = new Date('2022-01-16')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToEndForTwoWeeks)
             })
 
             it("returns correct dates given start date of Wednesday and end date of Wednesday", () => {
-                const startDate = new Date(2022, 0, 5)
-                const endDate = new Date(2022, 0, 12)
+                const startDate = new Date('2022-01-05')
+                const endDate = new Date('2022-01-12')
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToMidForTwoWeeks)
             })

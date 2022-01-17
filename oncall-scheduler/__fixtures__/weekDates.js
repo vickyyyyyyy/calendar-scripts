@@ -367,44 +367,44 @@ const weekdaysFor2022 = [
 
 const weekdaysForOneWeek = [
     [
-        new Date(2022, 0, 3),
-        new Date(2022, 0, 4),
-        new Date(2022, 0, 5),
-        new Date(2022, 0, 6),
-        new Date(2022, 0, 7)
+        new Date('2022-01-03'),
+        new Date('2022-01-04'),
+        new Date('2022-01-05'),
+        new Date('2022-01-06'),
+        new Date('2022-01-07'),
     ]
 ]
 
 const weekdaysFromStartToMidForOneWeek = [
     [
-        new Date(2022, 0, 10),
-        new Date(2022, 0, 11),
-        new Date(2022, 0, 12)
+        new Date('2022-01-10'),
+        new Date('2022-01-11'),
+        new Date('2022-01-12')
     ]
 ]
 
 const weekdaysFromMidToEndForOneWeek = [
     [
-        new Date(2022, 0, 12),
-        new Date(2022, 0, 13),
-        new Date(2022, 0, 14)
+        new Date('2022-01-12'),
+        new Date('2022-01-13'),
+        new Date('2022-01-14')
     ]
 ]
 
 const weekdaysForTwoWeeks = [
     [
-        new Date(2022, 0, 3),
-        new Date(2022, 0, 4),
-        new Date(2022, 0, 5),
-        new Date(2022, 0, 6),
-        new Date(2022, 0, 7)
+        new Date('2022-01-03'),
+        new Date('2022-01-04'),
+        new Date('2022-01-05'),
+        new Date('2022-01-06'),
+        new Date('2022-01-07')
     ],
     [
-        new Date(2022, 0, 10),
-        new Date(2022, 0, 11),
-        new Date(2022, 0, 12),
-        new Date(2022, 0, 13),
-        new Date(2022, 0, 14)
+        new Date('2022-01-10'),
+        new Date('2022-01-11'),
+        new Date('2022-01-12'),
+        new Date('2022-01-13'),
+        new Date('2022-01-14')
     ]
 ]
 
@@ -415,24 +415,16 @@ const weekdaysFromStartToMidForTwoWeeks = [
 
 const weekdaysFromMidToEndForTwoWeeks = [
     [
-        new Date(2022, 0, 5),
-        new Date(2022, 0, 6),
-        new Date(2022, 0, 7)
+        new Date('2022-01-05'),
+        new Date('2022-01-06'),
+        new Date('2022-01-07')
     ],
     weekdaysForTwoWeeks[1]
 ]
 
 const weekdaysFromMidToMidForTwoWeeks = [
-    [
-        new Date(2022, 0, 5),
-        new Date(2022, 0, 6),
-        new Date(2022, 0, 7),
-    ],
-    [
-        new Date(2022, 0, 10),
-        new Date(2022, 0, 11),
-        new Date(2022, 0, 12)
-    ]
+    weekdaysFromMidToEndForTwoWeeks[0],
+    weekdaysFromStartToMidForOneWeek[0]
 ]
 
 module.exports = {
