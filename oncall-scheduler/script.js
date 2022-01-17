@@ -94,7 +94,7 @@ function eventsToDays(events) {
             }
         } else {
             
-            for (start; start < end; start.setDate(start.getDate() + 1)) {
+            for (start; start < end; nextDay(start)) {
                 if (weekday(start)) {
                     daysOff.push(new Date(start))
                 }
@@ -156,10 +156,10 @@ function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 1
     var week = []
 
     // make this inclusive
-    end.setDate(end.getDate() + 1)
+    nextDay(end)
 
     // loop through days
-    for (var d = start; d < end; d.setDate(d.getDate() + 1)) {
+    for (var d = start; d < end; nextDay(d)) {
         const day = weekday(d)
         if (day) {
             var date = d
@@ -179,6 +179,10 @@ function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 1
     }
 
     return weeks
+}
+
+function nextDay(date) {
+    return date.setDate(date.getDate() + 1)
 }
 
 // Google code
