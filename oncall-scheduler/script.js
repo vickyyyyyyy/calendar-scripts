@@ -192,17 +192,27 @@ function nextDay(date) {
  * @param {string} username The team member that is attending the event.
  * @param {Calendar.Event} event The event to import.
  */
- function importEvent(username, event) {
-    event.summary = '[' + username + '] ' + event.summary;
-    event.organizer = {
-    id: TEAM_CALENDAR_ID,
-    };
-    event.attendees = [];
-    console.log('Importing: %s', event.summary);
+ function insertEvent(username, start, end) {
+    const eventToImport = {
+        iCalUID: new Date().getTime(),
+        summary: `${username}@grafana.com`,
+        organizer: {
+            id: TEAM_CALENDAR_ID,
+        },
+        attendees: [],
+        start: {
+            date: start
+        },
+        end: {
+            // make this inclusive
+            date: nextDay(end)
+        }
+    }
+    console.log('Inserting: %s', eventToImport.summary);
     try {
-        Calendar.Events.import(event, TEAM_CALENDAR_ID);
+        Calendar.Events.insert(eventToImport, TEAM_CALENDAR_ID);
     } catch (e) {
-        console.error('Error attempting to import event: %s. Skipping.',
+        console.error('Error attempting to insert event: %s. Skipping.',
             e.toString());
     }
 }
