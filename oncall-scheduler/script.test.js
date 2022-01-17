@@ -15,9 +15,16 @@ describe("script", () => {
                 .mockReturnValueOnce(response[3])
                 .mockReturnValueOnce(response[4])
                 .mockReturnValueOnce(response[5])
+                .mockReturnValueOnce(response[0])
+                .mockReturnValueOnce(response[1])
+                .mockReturnValueOnce(response[2])
+                .mockReturnValueOnce(response[3])
+                .mockReturnValueOnce(response[4])
+                .mockReturnValueOnce(response[5])
 
             expect(getOOO(google.users)).toEqual({
-                "taylor.swift": expectedDaysOff
+                "taylor.swift": expectedDaysOff,
+                "nicki.minaj": expectedDaysOff,
             })
         })
     })

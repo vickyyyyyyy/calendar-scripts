@@ -1,5 +1,6 @@
 const USERNAMES = [
-    "taylor.swift"
+    "taylor.swift",
+    "nicki.minaj",
 ]
 
 const users = USERNAMES.map((username) => ({
