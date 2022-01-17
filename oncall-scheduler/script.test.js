@@ -1,23 +1,40 @@
-const { eventsToDays, getWeeks } = require("./script")
+const { eventsToDays, getWeeks, getOOO } = require("./script")
 const weekDates = require("./__fixtures__/weekDates")
 const events = require("./__fixtures__/events")
+const google = require("./__fixtures__/google")
 
 describe("script", () => {
+    describe("getOOO", () => {
+        it("returns OOO with events", () => {
+            const response = events.calendarListResponses()[0]
+            const expectedDaysOff = events.calendarListResponses()[1]
+            jest.spyOn(google.Calendar.Events, 'list')
+                .mockReturnValueOnce(response[0])
+                .mockReturnValueOnce(response[1])
+                .mockReturnValueOnce(response[2])
+                .mockReturnValueOnce(response[3])
+                .mockReturnValueOnce(response[4])
+                .mockReturnValueOnce(response[5])
+
+            expect(getOOO(google.users)).toEqual({
+                "taylor.swift": expectedDaysOff
+            })
+        })
+    })
+
     describe("eventsToDays", () => {
         it("returns single day off for a Monday to Tuesday OOO event", () => {
             expect(eventsToDays([
                 events.OOOEvent()
-            ])).toEqual([
-                new Date(2022, 0, 17)
-            ])
+            ])).toEqual([new Date('2022-01-17')])
         })
 
         it("returns two days off for a Monday to Wednesday OOO event", () => {
             expect(eventsToDays([
                 events.OOOEvent("2022-01-17T00:00:00-05:00", "2022-01-19T00:00:00-05:00"),
             ])).toEqual([
-                new Date(2022, 0, 17),
-                new Date(2022, 0, 18)
+                new Date('2022-01-17'),
+                new Date('2022-01-18')
             ])
         })
 
