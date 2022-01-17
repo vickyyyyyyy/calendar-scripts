@@ -13,6 +13,8 @@ var GROUP_EMAIL = '';
 
 var KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline'];
 var MONTHS_IN_ADVANCE = 3;
+const NUMBER_IN_ROTATION_PER_WEEK = 2
+const MAX_DAYS_OFF_IN_A_WEEK = 1
 
 /**
  * Setup the script to run automatically every hour.
@@ -102,6 +104,51 @@ function eventsToDays(events) {
 
     return daysOff
     
+}
+
+function schedule(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
+    const users = Object.keys(ooo)
+    const schedule = []
+
+    for (week of weeks) {
+        var daysOff = 0
+        var count = 0
+        var deferredUsers = []
+        const rotation = []
+
+        while (count < users.length) {
+            if (rotation.length === numberInRotation) {
+                break
+            }
+
+            const user = users.shift()
+
+            // check overlap of OOO
+            for (day of week) {
+                if (ooo[user].find(date => date.getTime() == day.getTime())) {
+                    daysOff++
+                }
+            }
+
+            if (daysOff <= MAX_DAYS_OFF_IN_A_WEEK) {
+                // add to rotation and send user to the back
+                rotation.push(user)
+                users.push(user)
+
+            } else {
+                deferredUsers.push(user)
+            }
+
+            count++
+            daysOff = 0
+        }
+
+        schedule.push(rotation)
+        deferredUsers.forEach(du => users.unshift(du))
+        deferredUsers = []
+    }
+
+    return schedule
 }
 
 function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 11, 31)) { 
@@ -237,5 +284,6 @@ module.exports = {
     getUsers,
     getWeeks,
     eventsToDays,
-    getOOO
+    getOOO,
+    schedule
 }
