@@ -1,4 +1,4 @@
-const { eventsToDays, getWeeks, getOOO } = require("./script")
+const { eventsToDays, getWeeks, getOOO, schedule } = require("./script")
 const weekDates = require("./__fixtures__/weekDates")
 const events = require("./__fixtures__/events")
 const google = require("./__fixtures__/google")
@@ -223,6 +223,88 @@ describe("script", () => {
         
                 expect(getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFromMidToMidForTwoWeeks)
             })
+        })
+    })
+
+    describe("schedule", () => {
+        it("returns schedule with no overlapping OOO", () => {
+            const expectedDaysOff = events.calendarListResponses()[1]
+            const ooo = {
+                "taylor.swift": expectedDaysOff,
+                "nicki.minaj": expectedDaysOff,
+                "ariana.grande": expectedDaysOff,
+                "hayley.kiyoko": expectedDaysOff
+            }
+            expect(schedule(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
+                [
+                    "taylor.swift",
+                    "nicki.minaj",
+                ],
+                [
+                    "ariana.grande",
+                    "hayley.kiyoko",
+                ],
+                [
+                    "taylor.swift",
+                    "nicki.minaj",
+                ]
+            ])
+        })
+
+        it("returns schedule with overlapping OOO under the max days allowed", () => {
+            const expectedDaysOff = events.calendarListResponses()[1]
+            const ooo = {
+                "taylor.swift": [
+                    new Date('2022-01-03')
+                  ],
+                "nicki.minaj": expectedDaysOff,
+                "ariana.grande": expectedDaysOff,
+                "hayley.kiyoko": expectedDaysOff
+            }
+            expect(schedule(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
+                [
+                    "taylor.swift",
+                    "nicki.minaj",
+                ],
+                [
+                    "ariana.grande",
+                    "hayley.kiyoko",
+                ],
+                [
+                    "taylor.swift",
+                    "nicki.minaj",
+                ]
+            ])
+        })
+    
+        it("returns schedule with overlapping OOO over the max days allowed", () => {
+            const expectedDaysOff = events.calendarListResponses()[1]
+            const ooo = {
+                "taylor.swift": [
+                    new Date('2022-01-03'),
+                    new Date('2022-01-04'),
+                    new Date('2022-01-05'),
+                    new Date('2022-01-06'),
+                    new Date('2022-01-07'),
+                  ],
+                "nicki.minaj": expectedDaysOff,
+                "ariana.grande": expectedDaysOff,
+                "hayley.kiyoko": expectedDaysOff
+            }
+            expect(schedule(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
+                [
+                    "nicki.minaj",
+                    "ariana.grande",
+                ],
+                [
+                    "taylor.swift",
+                    "hayley.kiyoko",
+                ],
+                [
+                    "nicki.minaj",
+                    "ariana.grande"
+                ]
+            ])
         })
     })
 })
