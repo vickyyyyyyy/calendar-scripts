@@ -106,7 +106,7 @@ function eventsToDays(events) {
     
 }
 
-function schedule(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
+function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
     const users = Object.keys(ooo)
     const schedule = []
 
@@ -289,5 +289,5 @@ module.exports = {
     getWeeks,
     eventsToDays,
     getOOO,
-    schedule
+    scheduler,
 }
