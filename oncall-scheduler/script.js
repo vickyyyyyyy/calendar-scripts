@@ -47,15 +47,42 @@ function weekday(date) {
     return false
 }
 
+function getUsers() {
+  // Get the list of users in the Google Group.
+  return GroupsApp.getGroupByEmail(GROUP_EMAIL).getUsers();
+}
+
+function getOOO(users) {
+    // Define the calendar event date range to search.
+    var today = new Date();
+    var maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + MONTHS_IN_ADVANCE);
+
+    // Determine the time the the script was last run.
+    var lastRun = PropertiesService.getScriptProperties().getProperty('lastRun');
+    lastRun = lastRun ? new Date(lastRun) : null;
+
+    users.forEach((user) => {
+        KEYWORDS.forEach((keyword) => {
+            var events = findEvents(user, keyword, today, maxDate, lastRun);
+
+            if (eventsToDays(events).length > 0) {
+                OOO[user.getUsername()] = eventsToDays(events)
+            }
+        })
+    })
+
+    return OOO
+}
+
 function eventsToDays(events) {
     const daysOff = []
 
     for (var event of events) {
-        const start = new Date(Date.parse(event.start.dateTime))
-        start.setHours(0,0,0,0)
-        const end = new Date(Date.parse(event.end.dateTime))
-        end.setHours(0,0,0,0)
-        
+        const start = new Date(formatDateAsRFC3339(new Date(event.start.dateTime)))
+        const end = new Date(formatDateAsRFC3339(new Date(event.end.dateTime)))
+        start.setUTCHours(0)
+        end.setUTCHours(0)
         const numDaysOff = getNumberOfDays(start, end)
 
         // if this is a single OOO no need to loop
@@ -89,7 +116,6 @@ function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 1
         const day = weekday(d)
         if (day) {
             var date = d
-            date.setHours(0,0,0,0)
 
             week.push(new Date(date))
 
