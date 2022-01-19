@@ -315,26 +315,26 @@ describe("script", () => {
 
 
     describe("deleteEvents", () => {
-        it("calls Calendar.Events.remove with correct event id for no matching rotation", () => {
-            const listResponse = events.calendarListResponsesForDeleteEvents()
-            const event = listResponse.items[0]
-            jest.spyOn(google.Calendar.Events, 'list')
-                .mockReturnValueOnce(listResponse)
-
+        it("calls Calendar.Events.remove with single id", () => {
             const removeCall = jest.spyOn(google.Calendar.Events, 'remove')
-            script.deleteEvents("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [event.summary+Chance().string()])
+            const id = Chance().guid()
+            script.deleteEvents([id])
             
-            expect(removeCall).toHaveBeenCalledWith("", event.id)
+            expect(removeCall).toHaveBeenCalledWith("", id)
         })
 
-        it("does not call Calendar.Events.remove for matching rotation", () => {
-            const listResponse = events.calendarListResponsesForDeleteEvents()
-            const event = listResponse.items[0]
-            jest.spyOn(google.Calendar.Events, 'list')
-                .mockReturnValueOnce(listResponse)
-
+        it("calls Calendar.Events.remove with multiple ids", () => {
             const removeCall = jest.spyOn(google.Calendar.Events, 'remove')
-            script.deleteEvents("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [event.summary])
+            const ids = new Array(5).fill(null).map(()=> (Chance().guid()))
+            script.deleteEvents(ids)
+
+            ids.forEach(id => expect(removeCall).toHaveBeenCalledWith("", id))
+        })
+
+        it("does not call Calendar.Events.remove for no ids", () => {
+            const removeCall = jest.spyOn(google.Calendar.Events, 'remove')
+
+            script.deleteEvents([])
             
             expect(removeCall).not.toHaveBeenCalled()
         })

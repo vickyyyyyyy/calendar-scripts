@@ -193,46 +193,35 @@ function nextDay(date) {
  * @param {Calendar.Event} event The event to import.
  */
  function insertEvent(username, start, end) {
-    const eventToImport = {
-        iCalUID: new Date().getTime(),
-        summary: `${username}@grafana.com`,
-        organizer: {
-            id: TEAM_CALENDAR_ID,
-        },
-        attendees: [],
-        start: {
-            date: start
-        },
-        end: {
-            // make this inclusive
-            date: nextDay(end)
-        }
-    }
-    console.log('Inserting: %s', eventToImport.summary);
+    let response
+
+
     try {
-        Calendar.Events.insert(eventToImport, TEAM_CALENDAR_ID);
+        response = Calendar.Events.list(TEAM_CALENDAR_ID, {
+            timeMin: start,
+            timeMax: end,
+            showDeleted: false
+        });
+    } catch (e) {
+        console.error('Error attempting to list triage rotation: %s. Skipping.',
+            e.toString());
+    }
+
+    const matchingEventsByDate = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end))
+
+    const toDelete = matchingEventsByDate.filter(ev=> !rotation.includes(ev.summary))
+    deleteEvents(toDelete)
+
+    console.log('Inserting: %s', eventToInsert.summary);
+    try {
+        Calendar.Events.insert(eventToInsert, TEAM_CALENDAR_ID);
     } catch (e) {
         console.error('Error attempting to insert event: %s. Skipping.',
             e.toString());
     }
 }
 
-function deleteEvents(start, end, rotation) {
-    let response
-
-    try {
-          response = Calendar.Events.list(TEAM_CALENDAR_ID, {
-              timeMin: start,
-              timeMax: end,
-              showDeleted: false
-          });
-    } catch (e) {
-        console.error('Error attempting to list triage rotation: %s. Skipping.',
-            e.toString());
-    }
-  
-    const toDelete = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end) && !rotation.includes(ev.summary)).map(i => i.id)
-
+function deleteEvents(toDelete) {
     toDelete.forEach((id) => {
         try {
             Calendar.Events.remove(TEAM_CALENDAR_ID, id)
