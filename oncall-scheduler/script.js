@@ -217,6 +217,36 @@ function nextDay(date) {
     }
 }
 
+function deleteEvents(start, end, rotation) {
+    let response
+
+    try {
+          response = Calendar.Events.list(TEAM_CALENDAR_ID, {
+              timeMin: start,
+              timeMax: end,
+              showDeleted: false
+          });
+    } catch (e) {
+        console.error('Error attempting to list triage rotation: %s. Skipping.',
+            e.toString());
+    }
+  
+    const toDelete = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end) && rotation.includes(ev.summary)).map(i => i.id)
+
+    toDelete.forEach((id) => {
+        try {
+            Calendar.Events.remove(TEAM_CALENDAR_ID, id)
+        } catch {
+            console.error('Error attempting to delete triage rotation event: %s. Skipping.',
+                e.toString());
+        }
+    })
+}
+
+function dateString(date) {
+    return date.split("T")[0]
+}
+
 /**
  * In a given user's calendar, look for occurrences of the given keyword
  * in events within the specified date range and return any such events
@@ -300,4 +330,5 @@ module.exports = {
     eventsToDays,
     getOOO,
     scheduler,
+    deleteEvents,
 }
