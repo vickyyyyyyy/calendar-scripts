@@ -182,7 +182,7 @@ function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 1
 }
 
 function nextDay(date) {
-    return date.setDate(date.getDate() + 1)
+    return new Date(date.setDate(date.getDate() + 1))
 }
 
 // Google code
@@ -227,6 +227,33 @@ function deleteEvents(toDelete) {
             Calendar.Events.remove(TEAM_CALENDAR_ID, id)
         } catch {
             console.error('Error attempting to delete triage rotation event: %s. Skipping.',
+                e.toString());
+        }
+    })
+}
+
+function insertEvents(usernames, start, end) {
+    const endDate = nextDay(new Date(end)).toISOString()
+
+    const eventsToInsert = usernames.map(username => ({
+        summary: `${username}@grafana.com`,
+        organizer: {
+            id: TEAM_CALENDAR_ID,
+        },
+        attendees: [],
+        start: {
+            date: dateString(start)
+        },
+        end: {
+            date: dateString(endDate)
+        }
+    }))
+
+    eventsToInsert.forEach((ev) => {
+        try {
+            Calendar.Events.insert(ev, TEAM_CALENDAR_ID);
+        } catch (e) {
+            console.error('Error attempting to insert event: %s. Skipping.',
                 e.toString());
         }
     })
@@ -320,4 +347,5 @@ module.exports = {
     getOOO,
     scheduler,
     deleteEvents,
+    insertEvents,
 }
