@@ -184,8 +184,8 @@ const calendarListResponses = () => {
   ]]
 }
 
-const calendarListResponsesForDeleteEvents = () => {
-  const email = Chance().email()
+const calendarListResponsesForUpdateCalendar = () => {
+  const email = `${Chance().first}.${Chance().last()}@grafana.com`
 
   return {
       summary: Chance().sentence(),
@@ -216,7 +216,7 @@ const calendarListResponsesForDeleteEvents = () => {
               organizer: {
                   displayName: Chance().sentence(),
                   self: true,
-                  email: Chance().email()
+                  email
               },
               sequence: 0,
               iCalUID: Chance().guid(),
@@ -235,5 +235,5 @@ const calendarListResponsesForDeleteEvents = () => {
 module.exports = {
     OOOEvent,
     calendarListResponses,
-    calendarListResponsesForDeleteEvents
+    calendarListResponsesForUpdateCalendar
 }
