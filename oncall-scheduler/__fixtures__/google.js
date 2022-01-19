@@ -37,7 +37,8 @@ const Calendar = {
     Events: {
         list: () => [],
         import: () => null,
-        remove: () => null
+        remove: () => null,
+        insert: () => null
     }
 }
 

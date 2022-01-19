@@ -339,4 +339,65 @@ describe("script", () => {
             expect(removeCall).not.toHaveBeenCalled()
         })
     })
+
+    describe("insertEvents", () => {
+        it("calls Calender.Events.insert with single username", () => {
+            const insertCall = jest.spyOn(google.Calendar.Events, 'insert')
+            script.insertEvents(["some.name"], "2022-01-01T00:00:00Z", "2022-01-02T00:00:00Z")
+
+            expect(insertCall).toHaveBeenCalledWith({
+                summary: "some.name@grafana.com",
+                organizer: {
+                    id: "",
+                },
+                attendees: [],
+                start: {
+                    date: "2022-01-01"
+                },
+                end: {
+                    date: "2022-01-03"
+                }
+            }, "")
+        })
+
+        it("calls Calender.Events.insert with multiple usernames", () => {
+            const insertCall = jest.spyOn(google.Calendar.Events, 'insert')
+            script.insertEvents(["some.name", "other.name"], "2022-01-01T00:00:00Z", "2022-01-02T00:00:00Z")
+
+            expect(insertCall).toHaveBeenCalledWith({
+                summary: "some.name@grafana.com",
+                organizer: {
+                    id: "",
+                },
+                attendees: [],
+                start: {
+                    date: "2022-01-01"
+                },
+                end: {
+                    date: "2022-01-03"
+                }
+            }, "")
+
+            expect(insertCall).toHaveBeenCalledWith({
+                summary: "other.name@grafana.com",
+                organizer: {
+                    id: "",
+                },
+                attendees: [],
+                start: {
+                    date: "2022-01-01"
+                },
+                end: {
+                    date: "2022-01-03"
+                }
+            }, "")
+        })
+
+        it("does not call Calender.Events.insert with no username", () => {
+            const insertCall = jest.spyOn(google.Calendar.Events, 'insert')
+            script.insertEvents([], "2022-01-01T00:00:00Z", "2022-01-02T00:00:00Z")
+
+            expect(insertCall).not.toHaveBeenCalled()
+        })
+    })
 })
