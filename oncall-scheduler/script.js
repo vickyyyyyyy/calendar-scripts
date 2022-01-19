@@ -231,7 +231,7 @@ function deleteEvents(start, end, rotation) {
             e.toString());
     }
   
-    const toDelete = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end) && rotation.includes(ev.summary)).map(i => i.id)
+    const toDelete = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end) && !rotation.includes(ev.summary)).map(i => i.id)
 
     toDelete.forEach((id) => {
         try {
