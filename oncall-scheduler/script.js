@@ -192,9 +192,8 @@ function nextDay(date) {
  * @param {string} username The team member that is attending the event.
  * @param {Calendar.Event} event The event to import.
  */
- function insertEvent(username, start, end) {
+ function updateCalendar(start, end, rotation) {
     let response
-
 
     try {
         response = Calendar.Events.list(TEAM_CALENDAR_ID, {
@@ -209,16 +208,11 @@ function nextDay(date) {
 
     const matchingEventsByDate = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end))
 
-    const toDelete = matchingEventsByDate.filter(ev=> !rotation.includes(ev.summary))
+    const toDelete = matchingEventsByDate.filter(ev=> !rotation.includes(ev.summary.split("@")[0]))
     deleteEvents(toDelete)
 
-    console.log('Inserting: %s', eventToInsert.summary);
-    try {
-        Calendar.Events.insert(eventToInsert, TEAM_CALENDAR_ID);
-    } catch (e) {
-        console.error('Error attempting to insert event: %s. Skipping.',
-            e.toString());
-    }
+    const usernames = rotation.filter(username => !matchingEventsByDate.map(ev => ev.summary).includes(`${username}@grafana.com`))
+    insertEvents(usernames, start, end)
 }
 
 function deleteEvents(toDelete) {
@@ -348,4 +342,5 @@ module.exports = {
     scheduler,
     deleteEvents,
     insertEvents,
+    updateCalendar,
 }
