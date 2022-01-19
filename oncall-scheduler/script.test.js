@@ -2,8 +2,13 @@ const script = require("./script")
 const weekDates = require("./__fixtures__/weekDates")
 const events = require("./__fixtures__/events")
 const google = require("./__fixtures__/google")
+const { Chance } = require("chance")
 
 describe("script", () => {
+    afterEach(() => {
+        jest.resetAllMocks()
+    })
+
     describe("getOOO", () => {
         it("returns OOO with events", () => {
             const response = events.calendarListResponses()[0]
@@ -305,6 +310,33 @@ describe("script", () => {
                     "ariana.grande"
                 ]
             ])
+        })
+    })
+
+
+    describe("deleteEvents", () => {
+        it("calls Calendar.Events.remove with correct event id for one matching event", () => {
+            const listResponse = events.calendarListResponsesForDeleteEvents()
+            const event = listResponse.items[0]
+            jest.spyOn(google.Calendar.Events, 'list')
+                .mockReturnValueOnce(listResponse)
+
+            const removeCall = jest.spyOn(google.Calendar.Events, 'remove')
+            script.deleteEvents("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [event.summary])
+            
+            expect(removeCall).toHaveBeenCalledWith("", event.id)
+        })
+
+        it("does not call Calendar.Events.remove for no matching events", () => {
+            const listResponse = events.calendarListResponsesForDeleteEvents()
+            const event = listResponse.items[0]
+            jest.spyOn(google.Calendar.Events, 'list')
+                .mockReturnValueOnce(listResponse)
+
+            const removeCall = jest.spyOn(google.Calendar.Events, 'remove')
+            script.deleteEvents("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [event.summary+Chance().string()])
+            
+            expect(removeCall).not.toHaveBeenCalled()
         })
     })
 })

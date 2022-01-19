@@ -184,7 +184,56 @@ const calendarListResponses = () => {
   ]]
 }
 
+const calendarListResponsesForDeleteEvents = () => {
+  const email = Chance().email()
+
+  return {
+      summary: Chance().sentence(),
+      etag: Chance().guid(),
+      timeZone: "Europe/London",
+      updated: "2022-01-19T11:11:47.388Z",
+      nextSyncToken: Chance().guid(),
+      defaultReminders: [],
+      accessRole: "owner",
+      items: [
+          {
+              creator: {
+                  email
+              },
+              kind: "calendar#event",
+              status: "confirmed",
+              summary: email,
+              htmlLink: Chance().url(),
+              start: {
+                  date: "2022-01-03"
+              },
+              updated: "2022-01-19T11:11:47.388Z",
+              reminders: {
+                  useDefault: false
+              },
+              eventType: "default",
+              created: "2022-01-19T11:11:47.000Z",
+              organizer: {
+                  displayName: Chance().sentence(),
+                  self: true,
+                  email: Chance().email()
+              },
+              sequence: 0,
+              iCalUID: Chance().guid(),
+              transparency: "transparent",
+              id: Chance().guid(),
+              end: {
+                  date: "2022-01-08"
+              },
+              etag: Chance().guid()
+          }
+      ],
+      kind: "calendar#events"
+  }
+ }
+
 module.exports = {
     OOOEvent,
-    calendarListResponses
+    calendarListResponses,
+    calendarListResponsesForDeleteEvents
 }

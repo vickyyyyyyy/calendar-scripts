@@ -36,7 +36,8 @@ const PropertiesService = {
 const Calendar = {
     Events: {
         list: () => [],
-        import: () => null
+        import: () => null,
+        remove: () => null
     }
 }
 
