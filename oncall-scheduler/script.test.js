@@ -11,23 +11,10 @@ describe("script", () => {
 
     describe("getOOO", () => {
         it("returns OOO with events", () => {
-            const response = events.calendarListResponses()[0]
             const expectedDaysOff = events.calendarListResponses()[1]
-            jest.spyOn(google.Calendar.Events, 'list')
-                .mockReturnValueOnce(response[0])
-                .mockReturnValueOnce(response[1])
-                .mockReturnValueOnce(response[2])
-                .mockReturnValueOnce(response[3])
-                .mockReturnValueOnce(response[4])
-                .mockReturnValueOnce(response[5])
-                .mockReturnValueOnce(response[0])
-                .mockReturnValueOnce(response[1])
-                .mockReturnValueOnce(response[2])
-                .mockReturnValueOnce(response[3])
-                .mockReturnValueOnce(response[4])
-                .mockReturnValueOnce(response[5])
+            mockEventsListForUsers(2)
 
-            expect(script.getOOO(google.users)).toEqual({
+            expect(script.getOOO(google.users(2))).toEqual({
                 "taylor.swift": expectedDaysOff,
                 "nicki.minaj": expectedDaysOff,
             })
@@ -232,6 +219,10 @@ describe("script", () => {
     })
 
     describe("scheduler", () => {
+        beforeEach(() => {
+            mockEventsListForUsers()
+        })
+
         it("returns schedule with no overlapping OOO", () => {
             const expectedDaysOff = events.calendarListResponses()[1]
             const ooo = {
@@ -410,7 +401,7 @@ describe("script", () => {
 
             jest.spyOn(google.Calendar.Events, 'list')
                 .mockReturnValue(response)
-            script.updateCalendar("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [username])
+            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [username])
 
             expect(removeEventsCall).not.toHaveBeenCalled()
         })
@@ -422,7 +413,7 @@ describe("script", () => {
 
             jest.spyOn(google.Calendar.Events, 'list')
                 .mockReturnValue(response)
-            script.updateCalendar("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [Chance().email()])
+            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [Chance().email()])
 
             expect(removeEventsCall).toHaveBeenCalledWith("", response.items[0])
         })
@@ -434,7 +425,7 @@ describe("script", () => {
 
             jest.spyOn(google.Calendar.Events, 'list')
                 .mockReturnValue(response)
-            script.updateCalendar("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [Chance().email()])
+            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [Chance().email()])
 
             expect(insertEventsCall).toHaveBeenCalledTimes(1)
         })
@@ -447,9 +438,23 @@ describe("script", () => {
 
             jest.spyOn(google.Calendar.Events, 'list')
                 .mockReturnValue(response)
-            script.updateCalendar("2022-01-03T00:00:00Z", "2022-01-08T00:00:00Z", [username])
+            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [username])
 
             expect(insertEventsCall).not.toHaveBeenCalled()
         })
     })
 })
+const mockEventsListForUsers = (numUsers = google.users().length) => {
+    const response = events.calendarListResponses()[0]
+
+    let spy = jest.spyOn(google.Calendar.Events, 'list')
+
+    for (var i = 0; i < numUsers; i++){
+        spy = spy.mockReturnValueOnce(response[0])
+        .mockReturnValueOnce(response[1])
+        .mockReturnValueOnce(response[2])
+        .mockReturnValueOnce(response[3])
+        .mockReturnValueOnce(response[4])
+        .mockReturnValueOnce(response[5])
+    }
+}

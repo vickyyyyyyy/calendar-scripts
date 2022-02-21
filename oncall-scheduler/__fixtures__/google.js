@@ -1,9 +1,11 @@
 const USERNAMES = [
     "taylor.swift",
     "nicki.minaj",
+    "ariana.grande",
+    "hayley.kiyoko",
 ]
 
-const users = USERNAMES.map((username) => ({
+const users = (numberOfUsernames = USERNAMES.length) => USERNAMES.slice(0, numberOfUsernames).map((username) => ({
     toString: () => null,
     getUsername: () => username,
     getUserLoginId: () => null,
@@ -23,7 +25,7 @@ const ScriptApp = {
 
 const GroupsApp = {
     getGroupByEmail: () => ({
-        getUsers: () => users
+        getUsers: () => users()
     })
 }
 

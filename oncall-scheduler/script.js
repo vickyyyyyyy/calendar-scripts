@@ -29,6 +29,13 @@ function setup() {
   sync();
 }
 
+function sync() {
+    const users = getUsers()
+    const ooo = getOOO(users)
+    const weeks = getWeeks()
+    scheduler(ooo, weeks)
+}
+
 function getNumberOfDays(start, end) {
     const firstDate = new Date(start);
     const secondDate = new Date(end);
@@ -110,7 +117,7 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
     const users = Object.keys(ooo)
     const schedule = []
 
-    for (week of weeks) {
+    for (let week of weeks) {
         var daysOff = 0
         var count = 0
         var deferredUsers = []
@@ -146,6 +153,9 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
         schedule.push(rotation)
         deferredUsers.forEach(du => users.unshift(du))
         deferredUsers = []
+
+        // import events
+        updateCalendar(week[0], week[week.length-1], rotation)
     }
 
     return schedule
@@ -194,6 +204,9 @@ function nextDay(date) {
  */
  function updateCalendar(start, end, rotation) {
     let response
+
+    start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).toISOString()
+    end = new Date(end.getFullYear(), end.getMonth(), end.getDate()).toISOString()
 
     try {
         response = Calendar.Events.list(TEAM_CALENDAR_ID, {
@@ -296,6 +309,8 @@ function findEvents(user, keyword, start, end) {
     return events;
 }
 
+
+
 /**
  * Determines if the given event should be imported into the shared team
  * calendar.
@@ -343,4 +358,5 @@ module.exports = {
     deleteEvents,
     insertEvents,
     updateCalendar,
+    sync
 }
