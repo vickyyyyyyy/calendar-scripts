@@ -20,7 +20,10 @@ const ScriptApp = {
                 create: () => null
             })
         })
-    })
+    }),
+    WeekDay: {
+        FRIDAY: null
+    }
 }
 
 const GroupsApp = {

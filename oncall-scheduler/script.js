@@ -46,14 +46,14 @@ const MONTHS_IN_ADVANCE = 6
 const OOO = {}
 
 /**
- * Setup the script to run automatically every hour.
+ * Setup the script to run automatically on a regular cadence.
  */
 function setup() {
   var triggers = ScriptApp.getProjectTriggers();
   if (triggers.length > 0) {
     throw new Error('Triggers are already setup.');
   }
-  ScriptApp.newTrigger('sync').timeBased().everyHours(1).create();
+  ScriptApp.newTrigger('sync').timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).everyWeeks(3).create();
   // Run the first sync immediately.
   sync();
 }
