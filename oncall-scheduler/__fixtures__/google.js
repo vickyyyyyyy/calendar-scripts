@@ -5,7 +5,7 @@ const USERNAMES = [
     "hayley.kiyoko",
 ]
 
-const users = (numberOfUsernames = USERNAMES.length) => USERNAMES.slice(0, numberOfUsernames).map((username) => ({
+const users = (numberOfUsernames) => USERNAMES.slice(0, numberOfUsernames || USERNAMES.length).map((username) => ({
     toString: () => null,
     getUsername: () => username,
     getUserLoginId: () => null,

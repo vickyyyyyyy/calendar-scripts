@@ -12,6 +12,8 @@ var TEAM_CALENDAR_ID = '';
 var GROUP_EMAIL = '';
 
 var KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline'];
+// Set any members to exclude from the rotation by their username e.g. 'taylor.swift' from 'taylor.swift@grafana.com'
+const EXCLUDE_MEMBERS = [];
 var MONTHS_IN_ADVANCE = 3;
 const NUMBER_IN_ROTATION_PER_WEEK = 2
 const MAX_DAYS_OFF_IN_A_WEEK = 1
@@ -56,9 +58,10 @@ function weekday(date) {
     return false
 }
 
-function getUsers() {
+function getUsers(excludedMembers) {
+  excludedMembers = excludedMembers || EXCLUDE_MEMBERS
   // Get the list of users in the Google Group.
-  return GroupsApp.getGroupByEmail(GROUP_EMAIL).getUsers();
+  return GroupsApp.getGroupByEmail(GROUP_EMAIL).getUsers().filter(user => !excludedMembers.includes(user.getUsername()));
 }
 
 function getOOO(users) {

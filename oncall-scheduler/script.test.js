@@ -9,6 +9,32 @@ describe("script", () => {
         jest.resetAllMocks()
     })
 
+    describe("getUsers", () => {
+        beforeEach(() => {
+            jest.spyOn(google.GroupsApp, 'getGroupByEmail').mockReturnValue({
+                getUsers: () => google.users(2)
+            })
+        })
+    
+        it("returns all users when there are no excluded members passed in", () => {
+            expect(script.getUsers().map(u => u.getUsername())).toEqual([
+                "taylor.swift",
+                "nicki.minaj"
+            ])
+        })
+
+        it("returns all users when there are no excluded members", () => {
+            expect(script.getUsers([]).map(u => u.getUsername())).toEqual([
+                "taylor.swift",
+                "nicki.minaj"
+            ])
+        })
+
+        it("returns users without excluded members when there are excluded members", () => {
+            expect(script.getUsers(["nicki.minaj"]).map(u => u.getUsername())).toEqual(["taylor.swift"])
+        })
+    })
+    
     describe("getOOO", () => {
         it("returns OOO with events", () => {
             const expectedDaysOff = events.calendarListResponses()[1]
