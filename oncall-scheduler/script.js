@@ -1,23 +1,44 @@
 const { ScriptApp, GroupsApp, PropertiesService, Calendar } = require("./__fixtures__/google")
 
-// Copy everything from this point on
+/**
+ * Copy everything between the lines
+ * 
+ * ===========================================================================================================================================
+*/
 
-// Set the ID of the team calendar to add events to. You can find the calendar's
-// ID on the settings page.
-var TEAM_CALENDAR_ID = '';
-// Set the email address of the Google Group that contains everyone in the team.
-// Ensure the group has less than 500 members to avoid timeouts.
-var GROUP_EMAIL = '';
+/**
+ * Set the ID of the team calendar to add events to. The calendar's ID can be found on the settings page.
+ */
+const TEAM_CALENDAR_ID = '<ENTER_TEAM_CALENDAR_ID_HERE>';
 
-var KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline'];
+/**
+ * Set the email address of the Google Group that contains everyone in the team.
+ * Ensure the group has less than 500 members to avoid timeouts.
+ */
+const GROUP_EMAIL = '<ENTER_GROUP_EMAIL_HERE>';
+
+/**
+ * Set the keywords to filter for OOO events.
+ */
+const KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline'];
+
+
+/**
+ * Set any members to exclude from the rotation by their username e.g. 'taylor.swift' from 'taylor.swift@grafana.com'.
+ */
+const EXCLUDE_MEMBERS = [];
+
+/**
+ * Set the number of members in the rotation every week.
+ */
+const NUMBER_IN_ROTATION_PER_WEEK = 2
+
+/**
+ * Set the maximum OOO days off a member can have to be disregarded from the weekly rotation.
+ */
+const MAX_DAYS_OFF_IN_A_WEEK = 1
 
 const OOO = {}
-
-// Set any members to exclude from the rotation by their username e.g. 'taylor.swift' from 'taylor.swift@grafana.com'
-const EXCLUDE_MEMBERS = [];
-var MONTHS_IN_ADVANCE = 3;
-const NUMBER_IN_ROTATION_PER_WEEK = 2
-const MAX_DAYS_OFF_IN_A_WEEK = 1
 
 /**
  * Setup the script to run automatically every hour.
@@ -32,6 +53,9 @@ function setup() {
   sync();
 }
 
+/**
+ * Main function for creating a schedule based off OOO and import to Google Calendar.
+ */
 function sync() {
     const users = getUsers()
     const ooo = getOOO(users)
@@ -39,6 +63,9 @@ function sync() {
     scheduler(ooo, weeks)
 }
 
+/**
+ * Get the number of days between two dates.
+ */
 function getNumberOfDays(start, end) {
     const firstDate = new Date(start);
     const secondDate = new Date(end);
@@ -50,6 +77,9 @@ function getNumberOfDays(start, end) {
     return diffInDays;
 }
 
+/**
+ * Checks if a date is a weekday.
+ */
 function weekday(date) {
     const day = date.getDay()
     if (day > 0 && day < 6) {
@@ -59,12 +89,17 @@ function weekday(date) {
     return false
 }
 
+/**
+ * Returns users from the Google Group and ignores excluded members.
+ */
 function getUsers(excludedMembers) {
   excludedMembers = excludedMembers || EXCLUDE_MEMBERS
-  // Get the list of users in the Google Group.
   return GroupsApp.getGroupByEmail(GROUP_EMAIL).getUsers().filter(user => !excludedMembers.includes(user.getUsername()));
 }
 
+/**
+ * Gets OOO for users.
+ */
 function getOOO(users) {
     // Define the calendar event date range to search.
     var today = new Date();
@@ -94,6 +129,9 @@ function getOOO(users) {
     return OOO
 }
 
+/**
+ * Formats date frames to individual days.
+ */
 function eventsToDays(events) {
     const daysOff = []
 
@@ -120,9 +158,11 @@ function eventsToDays(events) {
     }
 
     return daysOff
-    
 }
 
+/**
+ * Uses OOO to generate a schedule.
+ */
 function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
     const users = Object.keys(ooo)
     const schedule = []
@@ -171,6 +211,9 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
     return schedule
 }
 
+/**
+ * Formats weeks by its weekdays. 
+ */
 function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 11, 31)) { 
     const weeks = []
     var week = []
@@ -201,11 +244,14 @@ function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 1
     return weeks
 }
 
+/**
+ * Adds a day to the date.
+ * Used for when dates are exclusive so an extra day is needed.
+ */
 function nextDay(date) {
     return new Date(date.setDate(date.getDate() + 1))
 }
 
-// Google code
 /**
  * Imports the given event from the user's calendar into the shared team
  * calendar.
@@ -237,6 +283,9 @@ function nextDay(date) {
     insertEvents(rotation, start, end)
 }
 
+/**
+ * Deletes Google Calendar Events by the ID. 
+ */
 function deleteEvents(toDelete) {
     toDelete.forEach((id) => {
         try {
@@ -248,6 +297,9 @@ function deleteEvents(toDelete) {
     })
 }
 
+/**
+ * Inserts Google Calendar Events. 
+ */
 function insertEvents(usernames, start, end) {
     const endDate = nextDay(new Date(end)).toISOString()
 
@@ -275,6 +327,9 @@ function insertEvents(usernames, start, end) {
     })
 }
 
+/**
+ * Get the date and ignore the timestamp. 
+ */
 function dateString(date) {
     return date.split("T")[0]
 }
@@ -318,8 +373,6 @@ function findEvents(user, keyword, start, end) {
     return events;
 }
 
-
-
 /**
  * Determines if the given event should be imported into the shared team
  * calendar.
@@ -355,8 +408,14 @@ function shoudImportEvent(user, keyword, event) {
  */
 function formatDateAsRFC3339(date) {
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString();
+    // return new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString()
 }
 
+/**
+ * End copy here
+ * 
+ * ===========================================================================================================================================
+*/
 
 module.exports = {
     getUsers,
