@@ -363,7 +363,7 @@ describe("script", () => {
             const id = Chance().guid()
             script.deleteEvents([id])
             
-            expect(removeCall).toHaveBeenCalledWith("", id)
+            expect(removeCall).toHaveBeenCalledWith("<ENTER_TEAM_CALENDAR_ID_HERE>", id)
         })
 
         it("calls Calendar.Events.remove with multiple ids", () => {
@@ -371,7 +371,7 @@ describe("script", () => {
             const ids = new Array(5).fill(null).map(()=> (Chance().guid()))
             script.deleteEvents(ids)
 
-            ids.forEach(id => expect(removeCall).toHaveBeenCalledWith("", id))
+            ids.forEach(id => expect(removeCall).toHaveBeenCalledWith("<ENTER_TEAM_CALENDAR_ID_HERE>", id))
         })
 
         it("does not call Calendar.Events.remove for no ids", () => {
@@ -391,7 +391,7 @@ describe("script", () => {
             expect(insertCall).toHaveBeenCalledWith({
                 summary: "some.name@grafana.com",
                 organizer: {
-                    id: "",
+                    id: "<ENTER_TEAM_CALENDAR_ID_HERE>",
                 },
                 attendees: [],
                 start: {
@@ -400,7 +400,7 @@ describe("script", () => {
                 end: {
                     date: "2022-01-03"
                 }
-            }, "")
+            }, "<ENTER_TEAM_CALENDAR_ID_HERE>")
         })
 
         it("calls Calender.Events.insert with multiple usernames", () => {
@@ -410,7 +410,7 @@ describe("script", () => {
             expect(insertCall).toHaveBeenCalledWith({
                 summary: "some.name@grafana.com",
                 organizer: {
-                    id: "",
+                    id: "<ENTER_TEAM_CALENDAR_ID_HERE>",
                 },
                 attendees: [],
                 start: {
@@ -419,12 +419,12 @@ describe("script", () => {
                 end: {
                     date: "2022-01-03"
                 }
-            }, "")
+            }, "<ENTER_TEAM_CALENDAR_ID_HERE>")
 
             expect(insertCall).toHaveBeenCalledWith({
                 summary: "other.name@grafana.com",
                 organizer: {
-                    id: "",
+                    id: "<ENTER_TEAM_CALENDAR_ID_HERE>",
                 },
                 attendees: [],
                 start: {
@@ -433,7 +433,7 @@ describe("script", () => {
                 end: {
                     date: "2022-01-03"
                 }
-            }, "")
+            }, "<ENTER_TEAM_CALENDAR_ID_HERE>")
         })
 
         it("does not call Calender.Events.insert with no username", () => {
@@ -466,7 +466,7 @@ describe("script", () => {
                 .mockReturnValue(response)
             script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [Chance().email()])
 
-            expect(removeEventsCall).toHaveBeenCalledWith("", response.items[0].id)
+            expect(removeEventsCall).toHaveBeenCalledWith("<ENTER_TEAM_CALENDAR_ID_HERE>", response.items[0].id)
         })
 
         it("calls Calendar.Events.insert with event that needs to be inserted", () => {
