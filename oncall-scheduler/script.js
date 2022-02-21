@@ -2,8 +2,6 @@ const { ScriptApp, GroupsApp, PropertiesService, Calendar } = require("./__fixtu
 
 // Copy everything from this point on
 
-const OOO = {}
-
 // Set the ID of the team calendar to add events to. You can find the calendar's
 // ID on the settings page.
 var TEAM_CALENDAR_ID = '';
@@ -218,12 +216,14 @@ function nextDay(date) {
     let response
 
     start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).toISOString()
-    end = new Date(end.getFullYear(), end.getMonth(), end.getDate()).toISOString()
+    endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate())
+    inclusiveEnd = nextDay(endDate).toISOString()
+    end = endDate.toISOString()
 
     try {
         response = Calendar.Events.list(TEAM_CALENDAR_ID, {
             timeMin: start,
-            timeMax: end,
+            timeMax: inclusiveEnd,
             showDeleted: false
         });
     } catch (e) {
@@ -231,13 +231,10 @@ function nextDay(date) {
             e.toString());
     }
 
-    const matchingEventsByDate = response.items.filter(ev => ev.start?.date == dateString(start) && ev.end?.date == dateString(end))
-
-    const toDelete = matchingEventsByDate.filter(ev=> !rotation.includes(ev.summary.split("@")[0]))
+    const toDelete = response.items.map(ev => ev.id)
     deleteEvents(toDelete)
 
-    const usernames = rotation.filter(username => !matchingEventsByDate.map(ev => ev.summary).includes(`${username}@grafana.com`))
-    insertEvents(usernames, start, end)
+    insertEvents(rotation, start, end)
 }
 
 function deleteEvents(toDelete) {

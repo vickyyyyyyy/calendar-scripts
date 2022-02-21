@@ -448,12 +448,11 @@ describe("script", () => {
         it("does not call Calendar.Events.remove with no events that need to be deleted from the Calendar.Events.list call", () => {
             const removeEventsCall = jest.spyOn(google.Calendar.Events, 'remove')
 
-            const response = events.calendarListResponsesForUpdateCalendar()
-            const username = response.items[0].summary.split("@")[0]
+            const response = events.calendarListResponsesForUpdateCalendar([])
 
             jest.spyOn(google.Calendar.Events, 'list')
                 .mockReturnValue(response)
-            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [username])
+            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [])
 
             expect(removeEventsCall).not.toHaveBeenCalled()
         })
@@ -467,7 +466,7 @@ describe("script", () => {
                 .mockReturnValue(response)
             script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [Chance().email()])
 
-            expect(removeEventsCall).toHaveBeenCalledWith("", response.items[0])
+            expect(removeEventsCall).toHaveBeenCalledWith("", response.items[0].id)
         })
 
         it("calls Calendar.Events.insert with event that needs to be inserted", () => {
@@ -480,19 +479,6 @@ describe("script", () => {
             script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [Chance().email()])
 
             expect(insertEventsCall).toHaveBeenCalledTimes(1)
-        })
-
-        it("does not call Calendar.Events.insert", () => {
-            const insertEventsCall = jest.spyOn(google.Calendar.Events, 'insert')
-
-            const response = events.calendarListResponsesForUpdateCalendar()
-            const username = response.items[0].summary.split("@")[0]
-
-            jest.spyOn(google.Calendar.Events, 'list')
-                .mockReturnValue(response)
-            script.updateCalendar(new Date("2022-01-03"), new Date("2022-01-08"), [username])
-
-            expect(insertEventsCall).not.toHaveBeenCalled()
         })
     })
 })

@@ -187,7 +187,7 @@ const calendarListResponses = (status = "confirmed", items) => {
     ]
 }
 
-const calendarListResponsesForUpdateCalendar = () => {
+const calendarListResponsesForUpdateCalendar = (items) => {
   const email = `${Chance().first}.${Chance().last()}@grafana.com`
 
   return {
@@ -198,7 +198,7 @@ const calendarListResponsesForUpdateCalendar = () => {
       nextSyncToken: Chance().guid(),
       defaultReminders: [],
       accessRole: "owner",
-      items: [
+      items: items || [
           {
               creator: {
                   email
