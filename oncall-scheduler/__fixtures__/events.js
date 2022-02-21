@@ -26,7 +26,7 @@ const OOOEvent = (start = "2022-01-17T00:00:00-05:00", end = "2022-01-18T00:00:0
        dateTime: start },
     creator: { email: Chance().email(), self: true } })
 
-const calendarListResponses = () => {
+const calendarListResponses = (status = "confirmed") => {
   const username = `${Chance().first()}.${Chance().last()}`.toLowerCase()
   const email = `${username}@grafana.com`
   const timeZone = 'Europe/London'
@@ -115,7 +115,7 @@ const calendarListResponses = () => {
             visibility: "public",
             kind: "calendar#event",
             iCalUID: Chance().guid(),
-            status: "confirmed",
+            status,
             updated,
             id: Chance().guid(),
             attendees: [
