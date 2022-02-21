@@ -231,6 +231,8 @@ describe("script", () => {
                 "ariana.grande": expectedDaysOff,
                 "hayley.kiyoko": expectedDaysOff
             }
+
+            // there are no OOO that conflicts with the rotation so schedule is as normal
             expect(script.scheduler(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
                 [
                     "taylor.swift",
@@ -257,6 +259,9 @@ describe("script", () => {
                 "ariana.grande": expectedDaysOff,
                 "hayley.kiyoko": expectedDaysOff
             }
+
+            // taylor.swift has a single OOO where they are unavailable for the rotation but it is
+            // under the max days allowed so they are still included in that week's rotation
             expect(script.scheduler(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
                 [
                     "taylor.swift",
@@ -287,6 +292,9 @@ describe("script", () => {
                 "ariana.grande": expectedDaysOff,
                 "hayley.kiyoko": expectedDaysOff
             }
+
+            // taylor.swift has OOsO where they are unavailable for the rotation and it is
+            // over the max days allowed so they are no longer included in that week's rotation
             expect(script.scheduler(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
                 [
                     "nicki.minaj",
