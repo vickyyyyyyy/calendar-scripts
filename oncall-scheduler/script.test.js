@@ -36,13 +36,31 @@ describe("script", () => {
     })
     
     describe("getOOO", () => {
-        it("returns OOO with events", () => {
+        it("returns OOO with OOO events", () => {
             const expectedDaysOff = events.calendarListResponses()[1]
             mockEventsListForUsers(2)
 
             expect(script.getOOO(google.users(2))).toEqual({
                 "taylor.swift": expectedDaysOff,
                 "nicki.minaj": expectedDaysOff,
+            })
+        })
+
+        it("returns OOO without including cancelled events", () => {
+            mockEventsListForUsers(2, "cancelled")
+
+            expect(script.getOOO(google.users(2))).toEqual({
+                "taylor.swift": [],
+                "nicki.minaj": [],
+            })
+        })
+
+        it("returns empty OOO for all users when no OOO events are returned", () => {
+            mockEventsListForUsers(2, undefined, [])
+
+            expect(script.getOOO(google.users(2))).toEqual({
+                "taylor.swift": [],
+                "nicki.minaj": [],
             })
         })
     })
@@ -478,8 +496,9 @@ describe("script", () => {
         })
     })
 })
-const mockEventsListForUsers = (numUsers = google.users().length) => {
-    const response = events.calendarListResponses()[0]
+
+const mockEventsListForUsers = (numUsers = google.users().length, status, items) => {
+    const response = events.calendarListResponses(status, items)[0]
 
     let spy = jest.spyOn(google.Calendar.Events, 'list')
 

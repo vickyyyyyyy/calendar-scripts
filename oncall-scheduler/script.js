@@ -12,6 +12,9 @@ var TEAM_CALENDAR_ID = '';
 var GROUP_EMAIL = '';
 
 var KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline'];
+
+const OOO = {}
+
 // Set any members to exclude from the rotation by their username e.g. 'taylor.swift' from 'taylor.swift@grafana.com'
 const EXCLUDE_MEMBERS = [];
 var MONTHS_IN_ADVANCE = 3;
@@ -75,11 +78,17 @@ function getOOO(users) {
     lastRun = lastRun ? new Date(lastRun) : null;
 
     users.forEach((user) => {
+        const username = user.getUsername()
+        OOO[username] = []
+
         KEYWORDS.forEach((keyword) => {
             var events = findEvents(user, keyword, today, maxDate, lastRun);
 
+            // ignore cancelled events
+            events = events.filter(event => event.status === "confirmed")
+
             if (eventsToDays(events).length > 0) {
-                OOO[user.getUsername()] = eventsToDays(events)
+                OOO[username] = [...OOO[username], ...eventsToDays(events)]
             }
         })
     })
