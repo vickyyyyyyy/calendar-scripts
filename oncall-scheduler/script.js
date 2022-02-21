@@ -38,6 +38,11 @@ const NUMBER_IN_ROTATION_PER_WEEK = 2
  */
 const MAX_DAYS_OFF_IN_A_WEEK = 1
 
+/**
+ * Set the number of months in advance to search for OOO.
+ */
+const MONTHS_IN_ADVANCE = 6
+
 const OOO = {}
 
 /**
