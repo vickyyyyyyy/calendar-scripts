@@ -137,18 +137,12 @@ describe("script", () => {
     })
     describe("getWeeks", () => {
 
-        describe("no input", () => {
-            beforeAll(() => {
-                jest.useFakeTimers('modern');
-                jest.setSystemTime(new Date('2022-01-01'));
-            });
-            
-            afterAll(() => {
-                jest.useRealTimers();
-            });
-    
+        describe("one year", () => {
             it("returns correct dates for year of 2022", () => {
-                expect(script.getWeeks()).toEqual(weekDates.weekdaysFor2022)
+                const startDate = new Date('2022-01-01')
+                const endDate = new Date('2023-01-01')
+
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysFor2022)
             })
         })
 
@@ -355,7 +349,6 @@ describe("script", () => {
             ])
         })
     })
-
 
     describe("deleteEvents", () => {
         it("calls Calendar.Events.remove with single id", () => {

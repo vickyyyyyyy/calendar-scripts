@@ -43,6 +43,11 @@ const MAX_DAYS_OFF_IN_A_WEEK = 1
  */
 const MONTHS_IN_ADVANCE = 6
 
+/**
+ * Set the start date for the rotation.
+ */
+const START_DATE = new Date()
+
 const OOO = {}
 
 /**
@@ -64,7 +69,11 @@ function setup() {
 function sync() {
     const users = getUsers()
     const ooo = getOOO(users)
-    const weeks = getWeeks()
+
+    let endDate = new Date(START_DATE.valueOf())
+    endDate.setMonth(endDate.getMonth() + MONTHS_IN_ADVANCE)
+
+    const weeks = getWeeks(START_DATE, endDate)
     scheduler(ooo, weeks)
 }
 
@@ -219,7 +228,7 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
 /**
  * Formats weeks by its weekdays. 
  */
-function getWeeks(start = new Date(), end = new Date(new Date().getFullYear(), 11, 31)) { 
+function getWeeks(start, end) { 
     const weeks = []
     var week = []
 
