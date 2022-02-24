@@ -78,20 +78,6 @@ function sync() {
 }
 
 /**
- * Get the number of days between two dates.
- */
-function getNumberOfDays(start, end) {
-    const firstDate = new Date(start);
-    const secondDate = new Date(end);
-
-    const oneDayInMs = 1000 * 60 * 60 * 24;
-    const diffInTime = secondDate.getTime() - firstDate.getTime();
-    const diffInDays = Math.round(diffInTime / oneDayInMs);
-
-    return diffInDays;
-}
-
-/**
  * Checks if a date is a weekday.
  */
 function weekday(date) {
@@ -134,6 +120,11 @@ function getOOO(users) {
             // ignore cancelled events
             events = events.filter(event => event.status === "confirmed")
 
+            events.forEach((event) => {
+                event.start = offsetDateTime(event.start)
+                event.end = offsetDateTime(event.end)
+            });
+
             if (eventsToDays(events).length > 0) {
                 OOO[username] = [...OOO[username], ...eventsToDays(events)]
             }
@@ -143,6 +134,13 @@ function getOOO(users) {
     return OOO
 }
 
+function normalizeDate(date) {
+    date = new Date(date)
+    date.setHours(date.getHours() + 12)
+
+    return date
+}
+
 /**
  * Formats date frames to individual days.
  */
@@ -150,23 +148,13 @@ function eventsToDays(events) {
     const daysOff = []
 
     for (var event of events) {
-        const start = new Date(formatDateAsRFC3339(new Date(event.start.dateTime)))
-        const end = new Date(formatDateAsRFC3339(new Date(event.end.dateTime)))
-        start.setUTCHours(0)
-        end.setUTCHours(0)
-        const numDaysOff = getNumberOfDays(start, end)
-
-        // if this is a single OOO no need to loop
-        if (numDaysOff === 1) {
-            if (weekday(start)) {
-                daysOff.push(start)
-            }
-        } else {
+        const start = normalizeDate(event.start.date)
+        const end = normalizeDate(event.end.date)
+        const exclusiveEnd = previousDay(end)
             
-            for (start; start < end; nextDay(start)) {
-                if (weekday(start)) {
-                    daysOff.push(new Date(start))
-                }
+        for (start; start <= exclusiveEnd; nextDay(start)) {
+            if (weekday(start)) {
+                daysOff.push(new Date(start))
             }
         }
     }
@@ -196,7 +184,7 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
 
             // check overlap of OOO
             for (day of week) {
-                if (ooo[user].find(date => date.getTime() == day.getTime())) {
+                if (ooo[user].find(date => date.getFullYear() === day.getFullYear() && date.getMonth() === day.getMonth() && date.getDate() === day.getDate())) {
                     daysOff++
                 }
             }
@@ -240,7 +228,6 @@ function getWeeks(start, end) {
         const day = weekday(d)
         if (day) {
             var date = d
-
             week.push(new Date(date))
 
             // chunk week days for Mon to Fri
@@ -264,6 +251,14 @@ function getWeeks(start, end) {
  */
 function nextDay(date) {
     return new Date(date.setDate(date.getDate() + 1))
+}
+
+/**
+ * Subtracts a day from the date.
+ * Used for when dates are inclusive so one day less is needed.
+ */
+function previousDay(date) {
+    return new Date(date.setDate(date.getDate() - 1))
 }
 
 /**
@@ -315,7 +310,7 @@ function deleteEvents(toDelete) {
  * Inserts Google Calendar Events. 
  */
 function insertEvents(usernames, start, end) {
-    const endDate = nextDay(new Date(end)).toISOString()
+    const endDate = new Date(end).toISOString()
 
     const eventsToInsert = usernames.map(username => ({
         summary: `${username}@grafana.com`,
@@ -346,6 +341,23 @@ function insertEvents(usernames, start, end) {
  */
 function dateString(date) {
     return date.split("T")[0]
+}
+
+/**
+ * Offset the timezone to avoid OOO days spanning across more days
+ */
+function offsetDateTime(eventStartOrEnd) {
+    if (!eventStartOrEnd.dateTime) {
+        return eventStartOrEnd
+    }
+
+    if (!eventStartOrEnd.dateTime.includes('00:00:00')) {
+        return eventStartOrEnd
+    }
+
+    return {
+        date: dateString(eventStartOrEnd.dateTime)
+    }
 }
 
 /**

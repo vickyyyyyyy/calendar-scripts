@@ -1,15 +1,13 @@
 const { Chance } = require("chance")
 
-const OOOEvent = (start = "2022-01-17T00:00:00-05:00", end = "2022-01-18T00:00:00-05:00") => ({ privateCopy: true,
+const OOOEvent = (start = "2022-01-17", end = "2022-01-18") => ({ privateCopy: true,
     summary: 'OOO',
     eventType: 'outOfOffice',
     created: Chance().date({string: true}),
     iCalUID: Chance().url(),
     htmlLink: Chance().url(),
     visibility: 'public',
-    end: 
-     { dateTime: end,
-       timeZone: 'America/New_York' },
+    end: { date: end },
     organizer: 
      { email: Chance().email(),
        displayName: 'Unknown Organizer' },
@@ -21,9 +19,7 @@ const OOOEvent = (start = "2022-01-17T00:00:00-05:00", end = "2022-01-18T00:00:0
     etag: Chance().guid(),
     id: Chance().guid(),
     updated: Chance().date({string: true}),
-    start: 
-     { timeZone: 'America/New_York',
-       dateTime: start },
+    start: { date: start },
     creator: { email: Chance().email(), self: true } })
 
 const calendarListResponses = (status = "confirmed", items) => {
@@ -178,11 +174,11 @@ const calendarListResponses = (status = "confirmed", items) => {
         }
     ],
         [
-            new Date('2022-04-11'),
-            new Date('2022-04-12'),
-            new Date('2022-04-13'),
-            new Date('2022-04-14'),
-            new Date('2022-04-15'),
+            new Date('2022-04-11T12:00:00+00:00'),
+            new Date('2022-04-12T12:00:00+00:00'),
+            new Date('2022-04-13T12:00:00+00:00'),
+            new Date('2022-04-14T12:00:00+00:00'),
+            new Date('2022-04-15T12:00:00+00:00'),
         ]
     ]
 }

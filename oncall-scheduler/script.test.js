@@ -69,70 +69,71 @@ describe("script", () => {
         it("returns single day off for a Monday to Tuesday OOO event", () => {
             expect(script.eventsToDays([
                 events.OOOEvent()
-            ])).toEqual([new Date('2022-01-17')])
+            ])).toEqual([new Date('2022-01-17T12:00:00+00:00')])
         })
 
         it("returns two days off for a Monday to Wednesday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-17T00:00:00-05:00", "2022-01-19T00:00:00-05:00"),
+                events.OOOEvent("2022-01-17", "2022-01-19"),
             ])).toEqual([
-                new Date('2022-01-17'),
-                new Date('2022-01-18')
+                new Date('2022-01-17T12:00:00+00:00'),
+                new Date('2022-01-18T12:00:00+00:00')
             ])
         })
 
         it("returns three days off for a Monday to Thursday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-17T00:00:00-05:00", "2022-01-20T00:00:00-05:00"),
+                events.OOOEvent("2022-01-17", "2022-01-20"),
             ])).toEqual([
-                new Date('2022-01-17'),
-                new Date('2022-01-18'),
-                new Date('2022-01-19')
+                new Date('2022-01-17T12:00:00+00:00'),
+                new Date('2022-01-18T12:00:00+00:00'),
+                new Date('2022-01-19T12:00:00+00:00')
             ])
         })
 
         it("returns five days off for a Monday to Saturday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-08T00:00:00-05:00"),
-            ])).toEqual(...weekDates.weekdaysForOneWeek)
+                events.OOOEvent("2022-01-03", "2022-01-08"),
+            ])).toEqual(weekDates.timeOffset(weekDates.weekdaysForOneWeek()[0]))
         })
 
         it("returns five days off for a Monday to Sunday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-09T00:00:00-05:00"),
-            ])).toEqual(...weekDates.weekdaysForOneWeek)
+                events.OOOEvent("2022-01-03", "2022-01-09"),
+            // ])).toEqual(...weekDates.weekdaysForOneWeek())
+            ])).toEqual(weekDates.timeOffset(weekDates.weekdaysForOneWeek()[0]))
         })
 
         it("returns five days off for a Monday to Monday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-10T00:00:00-05:00"),
-            ])).toEqual(...weekDates.weekdaysForOneWeek)
+                events.OOOEvent("2022-01-03", "2022-01-10"),
+            ])).toEqual(weekDates.timeOffset(weekDates.weekdaysForOneWeek()[0]))
         })
 
         it("does not return days off for a Saturday to Sunday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-01T00:00:00-05:00", "2022-01-02T00:00:00-05:00"),
+                events.OOOEvent("2022-01-01", "2022-01-02"),
             ])).toEqual([])
         })
 
         it("does not return days off for a Saturday to Monday OOO event", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-01T00:00:00-05:00", "2022-01-03T00:00:00-05:00"),
+                events.OOOEvent("2022-01-01", "2022-01-03"),
             ])).toEqual([])
         })
 
         it("returns days off for two midweek OOO events", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-03T00:00:00-05:00", "2022-01-05T00:00:00-05:00"),
-                events.OOOEvent("2022-01-05T00:00:00-05:00", "2022-01-08T00:00:00-05:00"),
-            ])).toEqual(...weekDates.weekdaysForOneWeek)
+                events.OOOEvent("2022-01-03", "2022-01-05"),
+                events.OOOEvent("2022-01-05", "2022-01-08"),
+            ])).toEqual(weekDates.timeOffset(weekDates.weekdaysForOneWeek()[0]))
         })
 
         it("returns days off for two week-long OOO events", () => {
             expect(script.eventsToDays([
-                events.OOOEvent("2022-01-01T00:00:00-05:00", "2022-01-08T00:00:00-05:00"),
-                events.OOOEvent("2022-01-10T00:00:00-05:00", "2022-01-17T00:00:00-05:00"),
-            ])).toEqual(weekDates.weekdaysForTwoWeeks.flat())
+                events.OOOEvent("2022-01-01", "2022-01-08"),
+                events.OOOEvent("2022-01-10", "2022-01-17"),
+            ])).toEqual(weekDates.timeOffset(weekDates.weekdaysForTwoWeeks().flat()))
         })
     })
     describe("getWeeks", () => {
@@ -151,21 +152,21 @@ describe("script", () => {
                 const startDate = new Date('2022-01-03')
                 const endDate = new Date('2022-01-07')
         
-                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek)
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek())
             })
     
             it("returns correct dates given start day of Monday and end day of Saturday", () => {
                 const startDate = new Date('2022-01-01')
                 const endDate = new Date('2022-01-08')
         
-                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek)
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek())
             })
         
             it("returns correct dates given start day of Monday and end day of Sunday", () => {
                 const startDate = new Date('2022-01-03')
                 const endDate = new Date('2022-01-09')
         
-                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek)
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForOneWeek())
             })
     
             it("returns correct dates given start day of Monday and end day of Wednesday", () => {
@@ -202,21 +203,21 @@ describe("script", () => {
                 const startDate = new Date('2022-01-03')
                 const endDate = new Date('2022-01-14')
         
-                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks)
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks())
             })
         
             it("returns correct dates given start date of Monday and end date of Saturday", () => {
                 const startDate = new Date('2022-01-03')
                 const endDate = new Date('2022-01-15')
         
-                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks)
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks())
             })
         
             it("returns correct dates given start date of Monday and end date of Sunday", () => {
                 const startDate = new Date('2022-01-03')
                 const endDate = new Date('2022-01-16')
         
-                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks)
+                expect(script.getWeeks(startDate, endDate)).toEqual(weekDates.weekdaysForTwoWeeks())
             })
 
             it("returns correct dates given start date of Monday and end date of Wednesday", () => {
@@ -391,7 +392,7 @@ describe("script", () => {
                     date: "2022-01-01"
                 },
                 end: {
-                    date: "2022-01-03"
+                    date: "2022-01-02"
                 }
             }, "<ENTER_TEAM_CALENDAR_ID_HERE>")
         })
@@ -410,7 +411,7 @@ describe("script", () => {
                     date: "2022-01-01"
                 },
                 end: {
-                    date: "2022-01-03"
+                    date: "2022-01-02"
                 }
             }, "<ENTER_TEAM_CALENDAR_ID_HERE>")
 
@@ -424,7 +425,7 @@ describe("script", () => {
                     date: "2022-01-01"
                 },
                 end: {
-                    date: "2022-01-03"
+                    date: "2022-01-02"
                 }
             }, "<ENTER_TEAM_CALENDAR_ID_HERE>")
         })

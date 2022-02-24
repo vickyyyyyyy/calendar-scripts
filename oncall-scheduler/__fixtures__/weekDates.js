@@ -365,7 +365,7 @@ const weekdaysFor2022 = [
   ]
 ]
 
-const weekdaysForOneWeek = [
+const weekdaysForOneWeek = () => [
     [
         new Date('2022-01-03'),
         new Date('2022-01-04'),
@@ -374,6 +374,7 @@ const weekdaysForOneWeek = [
         new Date('2022-01-07'),
     ]
 ]
+
 
 const weekdaysFromStartToMidForOneWeek = [
     [
@@ -391,7 +392,7 @@ const weekdaysFromMidToEndForOneWeek = [
     ]
 ]
 
-const weekdaysForTwoWeeks = [
+const weekdaysForTwoWeeks = () => [
     [
         new Date('2022-01-03'),
         new Date('2022-01-04'),
@@ -408,8 +409,15 @@ const weekdaysForTwoWeeks = [
     ]
 ]
 
+const timeOffset = (dates) => dates.map(days => {
+    days.setHours(days.getHours() + 12)
+
+    return days
+})
+
+
 const weekdaysFromStartToMidForTwoWeeks = [
-    ...weekdaysForOneWeek,
+    ...weekdaysForOneWeek(),
     ...weekdaysFromStartToMidForOneWeek
 ]
 
@@ -419,7 +427,7 @@ const weekdaysFromMidToEndForTwoWeeks = [
         new Date('2022-01-06'),
         new Date('2022-01-07')
     ],
-    weekdaysForTwoWeeks[1]
+    weekdaysForTwoWeeks()[1]
 ]
 
 const weekdaysFromMidToMidForTwoWeeks = [
@@ -430,6 +438,7 @@ const weekdaysFromMidToMidForTwoWeeks = [
 module.exports = {
   weekdaysFor2022,
   weekdaysForOneWeek,
+  timeOffset,
   weekdaysFromStartToMidForOneWeek,
   weekdaysFromMidToEndForOneWeek,
   weekdaysFromStartToMidForTwoWeeks,
