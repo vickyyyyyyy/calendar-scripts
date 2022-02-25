@@ -70,10 +70,11 @@ function sync() {
     const users = getUsers()
     const ooo = getOOO(users)
 
-    let endDate = new Date(START_DATE.valueOf())
+    const startDate = normalizeDate(START_DATE)
+    let endDate = new Date(startDate.valueOf())
     endDate.setMonth(endDate.getMonth() + MONTHS_IN_ADVANCE)
 
-    const weeks = getWeeks(START_DATE, endDate)
+    const weeks = getWeeks(startDate, endDate)
     scheduler(ooo, weeks)
 }
 
@@ -137,7 +138,7 @@ function getOOO(users) {
 }
 
 function normalizeDate(date) {
-    date = new Date(date)
+    // add 12 hours to round the date if needed
     date.setHours(date.getHours() + 12)
 
     return date
@@ -150,8 +151,8 @@ function eventsToDays(events) {
     const daysOff = []
 
     for (var event of events) {
-        const start = normalizeDate(event.start.date)
-        const end = normalizeDate(event.end.date)
+        const start = normalizeDate(new Date(event.start.date))
+        const end = normalizeDate(new Date(event.end.date))
         const exclusiveEnd = previousDay(end)
             
         for (start; start <= exclusiveEnd; nextDay(start)) {
