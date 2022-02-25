@@ -45,6 +45,7 @@ const MONTHS_IN_ADVANCE = 6
 
 /**
  * Set the start date for the rotation.
+ * Pass in the date wanted in the format: new Date('2022-01-01')
  */
 const START_DATE = new Date()
 
@@ -80,6 +81,8 @@ function sync() {
 
 /**
  * Checks if a date is a weekday.
+ * @param {Date} date The date to check whether it is a weekday or not.
+ * @return {boolean} whether it is a weekday or not.
  */
 function weekday(date) {
     const day = date.getDay()
@@ -92,6 +95,8 @@ function weekday(date) {
 
 /**
  * Returns users from the Google Group and ignores excluded members.
+ * @param {string[]} excludedMembers The members to exclude from the rotation.
+ * @return {Object[]} an array of user objects (see google.users for structure)
  */
 function getUsers(excludedMembers) {
   excludedMembers = excludedMembers || EXCLUDE_MEMBERS
@@ -100,6 +105,8 @@ function getUsers(excludedMembers) {
 
 /**
  * Gets OOO for users.
+ * @param {Object[]} users The objects of users.
+ * @return {{[username]: Date[]}} the OOO of all users.
  */
 function getOOO(users) {
     // Define the calendar event date range to search.
@@ -137,6 +144,11 @@ function getOOO(users) {
     return OOO
 }
 
+/**
+ * Round the date to offset UTC.
+ * @param {Date} date The date to offset.
+ * @return {Date} the rounded date.
+ */
 function normalizeDate(date) {
     // add 12 hours to round the date if needed
     date.setHours(date.getHours() + 12)
@@ -146,6 +158,8 @@ function normalizeDate(date) {
 
 /**
  * Formats date frames to individual days.
+ * @param {Object[]} events The OOO events from Google Calendar.
+ * @return {Date[]} single days off.
  */
 function eventsToDays(events) {
     const daysOff = []
@@ -167,6 +181,10 @@ function eventsToDays(events) {
 
 /**
  * Uses OOO to generate a schedule.
+ * @param {Date} ooo The start date of the weeks.
+ * @param {Date} weeks The end date of the weeks.
+ * @param {number} numberInRotation The size of the weekly rotation.
+ * @return {string[][]} a schedule array containining arrays of weekly rotations.
  */
 function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
     const users = Object.keys(ooo)
@@ -219,7 +237,10 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
 }
 
 /**
- * Formats weeks by its weekdays. 
+ * Formats weeks by its weekdays.
+ * @param {Date} start The start date of the weeks.
+ * @param {Date} end The end date of the weeks.
+ * @return {Date[][]} an array of arrays containing the weekdays.
  */
 function getWeeks(start, end) { 
     const weeks = []
@@ -253,6 +274,8 @@ function getWeeks(start, end) {
 /**
  * Adds a day to the date.
  * Used for when dates are exclusive so an extra day is needed.
+ * @param {Date} date The date to add a day to.
+ * @return {Date} the day after the date.
  */
 function nextDay(date) {
     return new Date(date.setDate(date.getDate() + 1))
@@ -261,6 +284,8 @@ function nextDay(date) {
 /**
  * Subtracts a day from the date.
  * Used for when dates are inclusive so one day less is needed.
+ * @param {Date} date The date to substract a day from.
+ * @return {Date} the day before the date.
  */
 function previousDay(date) {
     return new Date(date.setDate(date.getDate() - 1))
@@ -269,8 +294,9 @@ function previousDay(date) {
 /**
  * Imports the given event from the user's calendar into the shared team
  * calendar.
- * @param {string} username The team member that is attending the event.
- * @param {Calendar.Event} event The event to import.
+ * @param {Date} start The start date of the week.
+ * @param {Date} end The end date of the week.
+ * @param {string[]} rotation The rotation for the week.
  */
  function updateCalendar(start, end, rotation) {
     let response
@@ -298,7 +324,8 @@ function previousDay(date) {
 }
 
 /**
- * Deletes Google Calendar Events by the ID. 
+ * Deletes Google Calendar Events by the ID.
+ * @param {string[]} toDelete The calendar event IDs to delete.
  */
 function deleteEvents(toDelete) {
     toDelete.forEach((id) => {
@@ -312,7 +339,10 @@ function deleteEvents(toDelete) {
 }
 
 /**
- * Inserts Google Calendar Events. 
+ * Inserts Google Calendar Events.
+ * @param {string[]} usernames The usernames to insert events for.
+ * @param {string} start The start date of the event to be inserted.
+ * @param {string} end The end date of the event to be inserted (inclusive).
  */
 function insertEvents(usernames, start, end) {
     const endDate = new Date(end).toISOString()
@@ -343,7 +373,9 @@ function insertEvents(usernames, start, end) {
 }
 
 /**
- * Get the date and ignore the timestamp. 
+ * Get the date and ignore the timestamp.
+ * @param {string} date The date in string format.
+ * @return {string} a date string without the timestamp.
  */
 function dateString(date) {
     return date.split("T")[0]
@@ -351,6 +383,8 @@ function dateString(date) {
 
 /**
  * Offset the timezone to avoid OOO days spanning across more days
+ * @param {Object} eventStartOrEnd The date from a Google Calendar event.
+ * @return {Object} a formatted date time that is offset.
  */
 function offsetDateTime(eventStartOrEnd) {
     if (!eventStartOrEnd.dateTime) {
