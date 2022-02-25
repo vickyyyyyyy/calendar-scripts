@@ -125,8 +125,10 @@ function getOOO(users) {
                 event.end = offsetDateTime(event.end)
             });
 
-            if (eventsToDays(events).length > 0) {
-                OOO[username] = [...OOO[username], ...eventsToDays(events)]
+            const oooDays = eventsToDays(events)
+
+            if (oooDays.length > 0) {
+                OOO[username] = [...OOO[username], ...oooDays]
             }
         })
     })
