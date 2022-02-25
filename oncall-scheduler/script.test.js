@@ -100,7 +100,6 @@ describe("script", () => {
         it("returns five days off for a Monday to Sunday OOO event", () => {
             expect(script.eventsToDays([
                 events.OOOEvent("2022-01-03", "2022-01-09"),
-            // ])).toEqual(...weekDates.weekdaysForOneWeek())
             ])).toEqual(weekDates.timeOffset(weekDates.weekdaysForOneWeek()[0]))
         })
 
@@ -346,6 +345,35 @@ describe("script", () => {
                 [
                     "nicki.minaj",
                     "ariana.grande"
+                ]
+            ])
+        })
+
+        it("returns empty schedule when no one is available", () => {
+            const overlappingOOO = [
+                new Date('2022-01-03'),
+                new Date('2022-01-04'),
+                new Date('2022-01-05'),
+                new Date('2022-01-06'),
+                new Date('2022-01-07'),
+              ]
+
+            const ooo = {
+                "taylor.swift": overlappingOOO,
+                "nicki.minaj": overlappingOOO,
+                "ariana.grande": overlappingOOO,
+                "hayley.kiyoko": overlappingOOO
+            }
+
+            expect(script.scheduler(ooo, weekDates.weekdaysFor2022.slice(0,3))).toEqual([
+                [],
+                [
+                    "hayley.kiyoko",
+                    "ariana.grande"
+                ],
+                [
+                    "nicki.minaj",
+                    "taylor.swift"
                 ]
             ])
         })

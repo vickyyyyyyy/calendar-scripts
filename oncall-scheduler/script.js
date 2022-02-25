@@ -175,7 +175,9 @@ function scheduler(ooo, weeks, numberInRotation = NUMBER_IN_ROTATION_PER_WEEK) {
         var deferredUsers = []
         const rotation = []
 
-        while (count < users.length) {
+        const numberOfUsers = users.length
+
+        while (count < numberOfUsers) {
             if (rotation.length === numberInRotation) {
                 break
             }
@@ -434,7 +436,6 @@ function shoudImportEvent(user, keyword, event) {
  */
 function formatDateAsRFC3339(date) {
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString();
-    // return new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString()
 }
 
 /**
