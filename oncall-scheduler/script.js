@@ -334,6 +334,7 @@ function insertEvents(usernames, start, end) {
     eventsToInsert.forEach((ev) => {
         try {
             Calendar.Events.insert(ev, TEAM_CALENDAR_ID);
+            console.log(`Scheduling ${ev.summary} for ${dateString(start)} to ${dateString(endDate)}`)
         } catch (e) {
             console.error('Error attempting to insert event: %s. Skipping.',
                 e.toString());
