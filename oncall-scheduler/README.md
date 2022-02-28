@@ -22,7 +22,7 @@ Monday to Friday events are added to the Google team calendar given with their G
 1. Copy the code needed from the `script.js` file (see comments for which lines to copy)
 1. Paste the code into the new Google Apps Script project
 1. Fill in the `TEAM_CALENDAR_ID` and `GROUP_EMAIL`
-1. Adjust the script [settings](#settings), if needed
+1. (Optional) Adjust the script [settings](#settings), if needed
 1. [Run](https://developers.google.com/apps-script/samples/automations/vacation-calendar#step_3_populate_the_calendar) the script
 
 ### Settings
@@ -41,6 +41,9 @@ The script can be tweaked to support different use cases.
 | MAX_DAYS_OFF_IN_A_WEEK       | Maximum OOO days off a member can have to still be eligible for the weekly rotation    |
 | MONTHS_IN_ADVANCE            | Months in advance to generate the weekly rotation for                                  |
 | START_DATE                   | Start date of the rotation schedule                                                    |
+| CADENCE_WEEKS                | Cadence the script should be run in weeks to get new OOO and generate new schedules    |
+
+**NOTE:** If the `START_DATE` is altered, every subsequent run of the script (based on the `CADENCE_WEEKS` trigger) will still use that same start date. If this is not the intended behaviour and a different start date is only wanted for the very first run, the `START_DATE` should be reverted back to `new Date()` and the script saved after the initial run.
 
 ## Installation
 The script is intended to be copied to Google Apps Script but can be locally installed to run the tests for any new changes.

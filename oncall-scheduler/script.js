@@ -39,15 +39,20 @@ const NUMBER_IN_ROTATION_PER_WEEK = 2
 const MAX_DAYS_OFF_IN_A_WEEK = 1
 
 /**
- * Set the number of months in advance to search for OOO.
+ * Set the number of months in advance to search for OOO and generate schedule for.
  */
-const MONTHS_IN_ADVANCE = 6
+const MONTHS_IN_ADVANCE = 1
 
 /**
  * Set the start date for the rotation.
  * Pass in the date wanted in the format: new Date('2022-01-01')
  */
 const START_DATE = new Date()
+
+/**
+ * Set how often the script should run to check for new/updated OOO and generate new schedules.
+ */
+const CADENCE_IN_WEEKS = 4
 
 const OOO = {}
 
@@ -59,7 +64,9 @@ function setup() {
   if (triggers.length > 0) {
     throw new Error('Triggers are already setup.');
   }
-  ScriptApp.newTrigger('sync').timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).everyWeeks(3).create();
+
+  // More triggers can be found here: https://developers.google.com/apps-script/reference/script/clock-trigger-builder
+  ScriptApp.newTrigger('sync').timeBased().onWeekDay(ScriptApp.WeekDay.FRIDAY).everyWeeks(CADENCE_IN_WEEKS).create();
   // Run the first sync immediately.
   sync();
 }
@@ -112,7 +119,7 @@ function getOOO(users) {
     // Define the calendar event date range to search.
     var today = new Date();
     var maxDate = new Date();
-    maxDate.setMonth(maxDate.getMonth() + MONTHS_IN_ADVANCE);
+    maxDate.setMonth(normalizeDate(START_DATE).getMonth() + MONTHS_IN_ADVANCE);
 
     // Determine the time the the script was last run.
     var lastRun = PropertiesService.getScriptProperties().getProperty('lastRun');
