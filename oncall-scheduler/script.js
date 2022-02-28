@@ -5,6 +5,7 @@ const { ScriptApp, GroupsApp, PropertiesService, Calendar } = require("./__fixtu
  * 
  * ===========================================================================================================================================
 */
+// Version 1.0.0
 
 /**
  * Set the ID of the team calendar to add events to. The calendar's ID can be found on the settings page.
