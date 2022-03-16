@@ -1,4 +1,4 @@
-// Version 1.0.0
+// Version 1.1.0
 
 /**
  * Set the ID of the team calendar to add events to. The calendar's ID can be found on the settings page.
@@ -14,7 +14,7 @@ const GROUP_EMAIL = '<ENTER_GROUP_EMAIL_HERE>';
 /**
  * Set the keywords to filter for OOO events.
  */
-const KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline'];
+const KEYWORDS = ['vacation', 'ooh', 'ooo', 'holiday', 'out of office', 'offline', 'frånvarande', 'franvarande'];
 
 /**
  * Set the number of months in advance to search for OOO and generate schedule for.
